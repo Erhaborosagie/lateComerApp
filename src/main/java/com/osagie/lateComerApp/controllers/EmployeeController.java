@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -68,6 +69,12 @@ public class EmployeeController {
             @RequestParam(value = "dir", required = false, defaultValue = "desc") String dir,
             @RequestParam(value = "keyword", required = false, defaultValue = "debt") String keyword) {
         return ResponseEntity.ok(employeeService.findAll(page, pageSize, keyword, dir));
+    }
+
+    @GetMapping("search")
+    public ResponseEntity<List<Employee>> searchEmployees(
+            @RequestParam String keyword) {
+        return ResponseEntity.ok(employeeService.searchEmployee(keyword));
     }
 
     @PutMapping("/{id}")

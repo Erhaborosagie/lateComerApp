@@ -14,6 +14,7 @@ public interface EmployeeService {
     Employee findById(Long id);
 
     Page<Employee> findAll(int page, int size, String param, String dir);
+    List<Employee> searchEmployee(String keyword);
 
     List<Employee> findAll();
 }
