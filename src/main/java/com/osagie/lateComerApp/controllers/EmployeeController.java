@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/v1/employee")
@@ -35,7 +36,9 @@ public class EmployeeController {
     @PostMapping
     public ResponseEntity<Object> createEmployee(@Valid @RequestBody EmployeeDto employeeDto, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(
+                    Objects.requireNonNull(bindingResult.getFieldError()).getField() + " " +
+                            Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
         }
         Employee employee;
         employee = employeeService.addEmployee(employeeDto);
