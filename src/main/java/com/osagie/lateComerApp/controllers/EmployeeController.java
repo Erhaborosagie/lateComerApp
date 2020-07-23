@@ -54,7 +54,7 @@ public class EmployeeController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getMerchant(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getEmployee(@PathVariable("id") Long id) {
         Employee employee = employeeService.findById(id);
         if (employee == null) {
             return ResponseEntity.notFound().build();
