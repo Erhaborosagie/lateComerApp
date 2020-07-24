@@ -5,8 +5,12 @@ import com.osagie.lateComerApp.model.ArrivalTime;
 import com.osagie.lateComerApp.model.Employee;
 import com.osagie.lateComerApp.repository.ArrivalTimeRepository;
 import com.osagie.lateComerApp.service.EmployeeService;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +25,7 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/v1/employee")
+@Slf4j
 public class EmployeeController {
 
     private EmployeeService employeeService;
@@ -42,9 +47,14 @@ public class EmployeeController {
                             Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
         }
         Employee employee;
-        employee = employeeService.addEmployee(employeeDto);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(employee.getId()).toUri();
-        return ResponseEntity.created(location).build();
+        try {
+            employee = employeeService.addEmployee(employeeDto);
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(employee.getId()).toUri();
+            return ResponseEntity.created(location).build();
+        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Constraint Violation");
+        }
     }
 
     @GetMapping
